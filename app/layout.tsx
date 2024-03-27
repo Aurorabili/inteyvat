@@ -2,6 +2,12 @@ import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
 
+import Header from "./_components/header";
+import Footer from "./_components/footer";
+
+import Tailwind from "@/tailwind.config";
+import { cookies } from "next/headers";
+
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
@@ -14,9 +20,21 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const theme = Tailwind.daisyui.themes;
+  // Get theme based on the cookie "theme".
+  const themeCookie = cookies().get("theme");
+  // If the cookie "theme" does not exist, set theme to the first index of Themes.
+  const currentTheme = themeCookie ? themeCookie.value : theme[0];
+
   return (
-    <html lang="en">
-      <body className={inter.className}>{children}</body>
+    <html lang="en" data-theme={currentTheme}>
+      <body className={inter.className}>
+        <main>
+          <Header />
+          {children}
+          <Footer />
+        </main>
+      </body>
     </html>
   );
 }
